@@ -1,0 +1,10 @@
+
+
+To start the server :
+cd server 
+uvicorn main:app --reload
+
+To launch Nvm:
+cd ui
+nvm start
+

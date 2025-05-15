@@ -1,0 +1,11 @@
+batch_size: 32
+learning_rate: 0.001
+epochs: 50
+train_images: "data/train.txt"
+val_images: "data/val.txt"
+test_images: "data/test.txt"
+image_dir: "data/images"
+annotations_dir: "data/annotations"
+image_ext: ".jpg"
+mask_ext: ".png"
+image_size: [256, 256]
