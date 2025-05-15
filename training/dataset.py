@@ -86,9 +86,9 @@ test_dataset = SegmentationDataset(
 )
 
 # ✅ Convert datasets into PyTorch dataloaders
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True,num_workers=8, pin_memory=True)
-val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False,num_workers=8, pin_memory=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False,num_workers=8, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True,num_workers=8, pin_memory=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False,num_workers=8, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,num_workers=8, pin_memory=True)
 
 # Example usage: Print dataset sizes
 print(f"Training dataset size: {len(train_dataset)}")
