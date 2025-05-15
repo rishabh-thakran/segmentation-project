@@ -90,7 +90,7 @@ for model_name, model in models.items():
             os.chdir("/kaggle/working/segmentation-project")
             os.system("git add .")
             os.system(f'git commit -m "Auto-commit: Training progress at epoch {epoch}"')
-            os.system("git push https://{token}@github.com/rishabh-thakran/segmentation-project.git main")
+            os.system(f"git push https://{token}@github.com/rishabh-thakran/segmentation-project.git main")
 
     torch.save(model.state_dict(), f"saved_models/{model_name}.pth")
 
