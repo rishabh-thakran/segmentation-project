@@ -3,6 +3,7 @@ import glob
 import torch
 import numpy as np
 import time
+import re
 from tqdm import tqdm  # ✅ Progress Bar for Training Visualization
 from training.dataset import train_loader, val_loader, test_loader  # ✅ Import Dataset Loaders
 from models.unet import UNet
@@ -35,24 +36,33 @@ for model_name in models:
     if multi_gpu:
         models[model_name] = torch.nn.DataParallel(models[model_name])
 
-
 # ✅ Define Save Checkpoints & Directories
 save_epochs = [5, 10, 20, 50]
 save_dir = "saved_predictions"
 os.makedirs(save_dir, exist_ok=True)
 os.makedirs("saved_models", exist_ok=True)
 
+# ✅ Sort checkpoint files numerically to avoid epoch misordering
+def natural_sort(file_list):
+    return sorted(file_list, key=lambda x: int(re.findall(r"_epoch_(\d+)", x)[0]) if "_epoch_" in x else 0)
+
 # ✅ Training loop with automatic checkpoint loading
 for model_name, model in models.items():
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    checkpoint_files = sorted(glob.glob(f"saved_models/{model_name}_epoch_*.pth"))
+    checkpoint_files = natural_sort(glob.glob(f"saved_models/{model_name}_epoch_*.pth"))
     checkpoint_path = checkpoint_files[-1] if checkpoint_files else f"saved_models/{model_name}.pth"
+
+    # ✅ Debugging: Print checkpoint path to verify correct checkpoint is used
+    print(f"🔍 Loaded checkpoint: {checkpoint_path}")
 
     if os.path.exists(checkpoint_path):
         print(f"🔄 Resuming training for {model_name} from {checkpoint_path}")
         model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-        last_epoch = int(checkpoint_path.split("_epoch_")[-1].split(".pth")[0]) if "_epoch_" in checkpoint_path else 0
+
+        # ✅ Extract correct epoch value using regex
+        last_epoch_match = re.findall(r"_epoch_(\d+)", checkpoint_path)
+        last_epoch = int(last_epoch_match[0]) if last_epoch_match else 0
     else:
         print(f"🚀 Starting fresh training for {model_name}")
         last_epoch = 0
@@ -87,7 +97,6 @@ for model_name, model in models.items():
         if epoch % 5 == 0:
             torch.save(model.state_dict(), f"saved_models/{model_name}_epoch_{epoch}.pth")
 
-           
     torch.save(model.state_dict(), f"saved_models/{model_name}.pth")
 
 print("✅ Training complete! All models saved successfully. 🚀🔥")
