@@ -81,8 +81,9 @@ for model_name, model in models.items():
             loss.backward()
             optimizer.step()
 
-            # ✅ Updated: Format loss to display 5 decimal places
-            loop.set_postfix(loss=f"{loss.item():.5f}")
+            # ✅ Updated: Force loss to be a float and ensure 5 decimal places
+            formatted_loss = f"{float(loss.item()):.5f}"
+            loop.set_postfix(loss=formatted_loss, refresh=True)  # ✅ Ensure loss updates dynamically
 
         print(f"✅ Completed epoch {epoch} for {model_name}")
 
