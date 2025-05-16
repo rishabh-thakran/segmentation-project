@@ -1,8 +1,4 @@
 import os
-token = os.getenv("GITHUB_TOKEN")
-if not token:
-    raise ValueError("Token not initialized")
-import os
 import glob
 import torch
 import numpy as np
@@ -38,12 +34,6 @@ for model_name in models:
     models[model_name] = models[model_name].to(device)
     if multi_gpu:
         models[model_name] = torch.nn.DataParallel(models[model_name])
-
-#checking auto-commit
-os.chdir("/kaggle/working/segmentation-project")
-os.system("git add .")
-os.system(f'git commit -m "Auto-commit: Training progress check at start"')
-os.system(f"git push https://{token}@github.com/rishabh-thakran/segmentation-project.git main")
 
 
 # ✅ Define Save Checkpoints & Directories
@@ -97,12 +87,7 @@ for model_name, model in models.items():
         if epoch % 5 == 0:
             torch.save(model.state_dict(), f"saved_models/{model_name}_epoch_{epoch}.pth")
 
-            # ✅ Git auto-commit inside the training loop (every 5 epochs)
-            os.chdir("/kaggle/working/segmentation-project")
-            os.system("git add .")
-            os.system(f'git commit -m "Auto-commit: Training progress at epoch {epoch}"')
-            os.system(f"git push https://{token}@github.com/rishabh-thakran/segmentation-project.git main")
-
+           
     torch.save(model.state_dict(), f"saved_models/{model_name}.pth")
 
 print("✅ Training complete! All models saved successfully. 🚀🔥")
